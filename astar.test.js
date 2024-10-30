@@ -1,0 +1,1 @@
+const { aStarAlgorithm } = require('./astar');
