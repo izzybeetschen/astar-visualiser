@@ -76,6 +76,34 @@ function tracePath(cellDetails, dest) {
 }
 
 //a* algorithm
-function astar(grid, startNode, endNode) {
-    pass
+function astar(grid, startNode, dest) {
+    if (isValid(startNode[0], startNode[1]) == false) {
+        console.log("Source is invalid\n");
+        return;
+    }
+
+    if (isValid(dest[0], dest[1]) == false) {
+        console.log("Destination is invalid\n");
+        return;
+    }
+
+    if (isUnblocked(grid, startNode[0], startNode[1]) == false || isUnblocked(grid, dest[0], dest[1] == false)) {
+        console.log("Source or the destination is blocked\n");
+        return;
+    }
+
+    let closedList = new Array(ROW);
+    
+    // closed list - no cell included yet
+    for (let i = 0; i < ROW; i++) {
+        closedList[i] = new Array(COL).fill(false);
+    }
+
+    let cellDetails = new Array(ROW);
+    
+    for (let i = 0; i < ROW; i++) {
+        cellDetails[i] = new Array(COL);
+    }
+
+    let i, j;
 }
