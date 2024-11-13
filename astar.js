@@ -120,4 +120,58 @@ function astar(grid, startNode, dest) {
             cellDetails[i][j].parent_x = -1;
         }
     }
+
+    // initialises the parameters of startNode
+    i = startNode[0], j = startNode[1]
+    cellDetails[i][j].f = 0;
+    cellDetails[i][j].g = 0;
+    cellDetails[i][j].h = 0;
+    cellDetails[i][j].parent_y = i;
+    cellDetails[i][j].parent_y = j;
+
+    let openList = new Map();
+
+    openList.set(0, [i, j]);
+
+    let foundDest = false;
+
+    while (openList.size > 0) {
+        let p = openList.entries().next().value
+
+        openList.delete(p[0]);
+
+        i = p[1][0];
+        j = p[1][1];
+        closedList[i][j] = true;
+
+        let gNew, hNew, fNew;
+
+        if (isValid(i - 1, j) == true) {
+            if (isDestination(i - 1, j, dest) == true) {
+                cellDetails[i - 1][j].parent_y = y;
+                cellDetails[i - 1][j].parent_x = x;
+                
+                tracePath(cellDetails, dest);
+                foundDest = true;
+                return;
+            }
+            else if (closedList[i-1][j] == false && isUnblocked(grid, i-1, j) == true) {
+                gNew = cellDetails[i][j].g + 1;
+                hNew = calculateH(i-1, j, dest);
+                fNew = gNew + hNew;
+
+                if (cellDetails[i-1][j].f == 2147483647 || cellDetails[i-1][j].f > fNew) {
+                    openList.set(fNew, [i-1, j]);
+
+                    cellDetails[i-1][j].f = fNew;
+                    cellDetails[i-1][j].g = gNew;
+                    cellDetails[i-1][j].h = hNew;
+                    cellDetails[i-1][j].parent_y = i;
+                    cellDetails[i-1][j].parent_x = j;
+                }
+            }
+        }
+        
+    }
+
 }
