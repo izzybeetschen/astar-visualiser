@@ -146,6 +146,8 @@ function astar(grid, startNode, dest) {
 
         let gNew, hNew, fNew;
 
+        // North successor
+
         if (isValid(i - 1, j) == true) {
             if (isDestination(i - 1, j, dest) == true) {
                 cellDetails[i - 1][j].parent_y = y;
@@ -171,7 +173,36 @@ function astar(grid, startNode, dest) {
                 }
             }
         }
+        // South successor
+
+        if (isValid(i + 1, j) == true) {
+            if (isDestination(i + 1, j, dest) == true) {
+                cellDetails[i+1][j].parent_y = y;
+                cellDetails[i+1][j].parent_x = x;
+
+                tracePath(cellDetails, dest);
+                foundDest = true;
+                return;
+            }
+
+            else if (closedList[i+1][j] == false && isUnblocked(grid, i+1, j) == true) {
+                gNew = cellDetails[i][j].g + 1;
+                hNew = calculateH(i+1, j, dest);
+                fNew = gNew + hNew;
+            
+                if (cellDetails[i+1][j].f == 2147483647 || cellDetails[i+1][j].f > fNew) {
+                    openList.set(fNew, [i+1, j]);
+
+                    cellDetails[i+1][j].f = fNew;
+                    cellDetails[i+1][j].g = gNew;
+                    cellDetails[i+1][j].h = hNew;
+                    cellDetails[i+1][j].parent_y = i;
+                    cellDetails[i+1][j].parent_x = j;
+                }
+            }
+        }
         
+        // East successor
     }
 
 }
