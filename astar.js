@@ -203,6 +203,31 @@ function astar(grid, startNode, dest) {
         }
         
         // East successor
+        if (isValid(i, j+1) == true) {
+            if (isDestination(i, j + 1, dest) == true) {
+                cellDetails[i][j+1].parent_y = y;
+                cellDetails[i][j+1].parent_x = x;
+                
+                tracePath(cellDetails, dest);
+                foundDest = true;
+                return;
+            } else if (closedList[i][j+1] == false && isUnblocked(grid, i, j + 1) == true) {
+                gNew = cellDetails[i][j].g + 1;
+                hNew = calculateH(i, j+1, dest);
+                fNew = gNew + hNew;
+
+                if (cellDetails[i][j+1].f == 2147483647 || cellDetails[i][j+1].f > fNew) {
+                    openList.set(fNew, [i, j+1]);
+
+                    cellDetails[i][j+1].f = fNew;
+                    cellDetails[i][j+1].g = gNew;
+                    cellDetails[i][j+1].h = hNew;
+                    cellDetails[i][j+1].parent_y = i;
+                    cellDetails[i][j+1].parent_x = j;
+                }
+            }
+        }
+        
     }
 
 }
