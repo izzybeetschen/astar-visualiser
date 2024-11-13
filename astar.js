@@ -7,7 +7,7 @@ const math = create(all, config)
 let ROW = 10;
 let COL = 10;
 
-class node {
+class cell {
     constructor() {
         // coordinates: (parent_y, parent_x)
         this.parent_x = 0; // j
@@ -77,16 +77,19 @@ function tracePath(cellDetails, dest) {
 
 //a* algorithm
 function astar(grid, startNode, dest) {
+    // checks to ensure source is valid
     if (isValid(startNode[0], startNode[1]) == false) {
         console.log("Source is invalid\n");
         return;
     }
 
+    // checks to ensure destination is valid
     if (isValid(dest[0], dest[1]) == false) {
         console.log("Destination is invalid\n");
         return;
     }
 
+    // checks to ensure it is possible to start at source, or end at destination
     if (isUnblocked(grid, startNode[0], startNode[1]) == false || isUnblocked(grid, dest[0], dest[1] == false)) {
         console.log("Source or the destination is blocked\n");
         return;
@@ -106,4 +109,15 @@ function astar(grid, startNode, dest) {
     }
 
     let i, j;
+
+    for (i = 0; i < ROW; i++) {
+        for (j = 0; j < COL; j++) {
+            cellDetails[i][j] = new cell();
+            cellDetails[i][j].f = 2147483647;
+            cellDetails[i][j].g = 2147483647;
+            cellDetails[i][j].h = 2147483647;
+            cellDetails[i][j].parent_y = -1;
+            cellDetails[i][j].parent_x = -1;
+        }
+    }
 }
