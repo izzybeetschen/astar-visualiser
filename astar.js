@@ -1,110 +1,116 @@
 import { create, all } from 'mathjs'
 
-const math = create(all, config)
+const config = {
+    matrix: 'Array',
+    number: 'BigNumber',
+  };
+
+const math = create(all, config);
 
 // Main algorithm is derived from geeksforgeeks.org
 
-let ROW = 10;
+let ROW = 9;
 let COL = 10;
 
 class cell {
-    constructor() {
-        // coordinates: (parent_y, parent_x)
-        this.parent_x = 0; // j
-        this.parent_y = 0; // i
-        this.f = 0; 
+    constructor(){
+        this.parent_i = 0;
+        this.parent_j = 0;
+        this.f = 0;
         this.g = 0;
         this.h = 0;
     }
 }
 
-// checks if node is valid
-function isValid(y, x) {
-    return (y >= 0) && (y < col) && (x >= 0) && (x < row);
+function isValid(row, col)
+{
+    return (row >= 0) && (row < ROW) && (col >= 0) && (col < COL);
 }
 
-// checks if node is free
-function isUnblocked(grid, y, x) {
-    if (grid[y][x] == 1) {
+function isUnBlocked(grid, row, col)
+{
+    if (grid[row][col] == 1)
         return (true);
-    } else {
+    else
         return (false);
-    }
 }
 
-// checks if node is the destination
-function isDestination(y, x, dest) {
-    if (y == dest[0] && x == dest[1]) {
+function isDestination(row, col, dest)
+{
+    if (row == dest[0] && col == dest[1])
         return (true);
-    } else {
+    else
         return (false);
-    }
 }
 
-function calculateH(y, x, dest) {
-    return (math.sqr((y - dest[0]) * (y - dest[0]) + (x - dest[1]) * (x - dest[1])));
+function calculateHValue(row, col, dest)
+{
+    return (Math.sqrt((row - dest[0]) * (row - dest[0]) + (col - dest[1]) * (col - dest[1])));
 }
 
-function tracePath(cellDetails, dest) {
-    console.log("The Path is ")
-    let y = dest[0];
-    let x = dest[1];
+function tracePath(cellDetails, dest)
+{
+    console.log("The Path is ");
+    let row = dest[0];
+    let col = dest[1];
 
     let Path = [];
 
-    while (!(cellDetails[y][x].parent_y == y && cellDetails[y][x].parent_x == x)) {
-        Path.push([y, x]);
-        let temp_y = cellDetails[y][x].parent_y;
-        let temp_x = cellDetails[y][x].parent_x;
-        y = temp_y;
-        x = temp_x;
+    while (!(cellDetails[row][col].parent_i == row && cellDetails[row][col].parent_j == col)) {
+        Path.push([row, col]);
+        let temp_row = cellDetails[row][col].parent_i;
+        let temp_col = cellDetails[row][col].parent_j;
+        row = temp_row;
+        col = temp_col;
     }
 
-    Path.push([y, x]);
+    Path.push([row, col]);
     while (Path.length > 0) {
         let p = Path[0];
         Path.shift();
-
-        if (p[0] == 2 || p[0] == 1) {
+        
+        if(p[0] == 2 || p[0] == 1){
             console.log("-> (" + p[0] + ", " + (p[1] - 1) + ")");
-        } else {
-            console.log("-> (" + p[0] + ", " + p[1] + ")");
         }
-    } 
+        else console.log("-> (" + p[0] + ", " + p[1] + ")");
+    }
 
     return;
 }
 
-//a* algorithm
-function astar(grid, startNode, dest) {
-    // checks to ensure source is valid
-    if (isValid(startNode[0], startNode[1]) == false) {
+// A* Search Algorithm
+function aStarSearch(grid, src, dest)
+{
+    if (isValid(src[0], src[1]) == false) {
         console.log("Source is invalid\n");
         return;
     }
 
-    // checks to ensure destination is valid
     if (isValid(dest[0], dest[1]) == false) {
         console.log("Destination is invalid\n");
         return;
     }
 
-    // checks to ensure it is possible to start at source, or end at destination
-    if (isUnblocked(grid, startNode[0], startNode[1]) == false || isUnblocked(grid, dest[0], dest[1] == false)) {
+    if (isUnBlocked(grid, src[0], src[1]) == false
+        || isUnBlocked(grid, dest[0], dest[1])
+               == false) {
         console.log("Source or the destination is blocked\n");
         return;
     }
 
+    if (isDestination(src[0], src[1], dest)
+        == true) {
+        console.log("We are already at the destination\n");
+        return;
+    }
+
     let closedList = new Array(ROW);
-    
-    // closed list - no cell included yet
-    for (let i = 0; i < ROW; i++) {
+    for(let i = 0; i < ROW; i++){
         closedList[i] = new Array(COL).fill(false);
     }
 
     let cellDetails = new Array(ROW);
-    
-    for (let i = 0; i < ROW; i++) {
+    for(let i = 0; i < ROW; i++){
         cellDetails[i] = new Array(COL);
     }
 
@@ -116,18 +122,17 @@ function astar(grid, startNode, dest) {
             cellDetails[i][j].f = 2147483647;
             cellDetails[i][j].g = 2147483647;
             cellDetails[i][j].h = 2147483647;
-            cellDetails[i][j].parent_y = -1;
-            cellDetails[i][j].parent_x = -1;
+            cellDetails[i][j].parent_i = -1;
+            cellDetails[i][j].parent_j = -1;
         }
     }
 
-    // initialises the parameters of startNode
-    i = startNode[0], j = startNode[1]
+    i = src[0], j = src[1];
     cellDetails[i][j].f = 0;
     cellDetails[i][j].g = 0;
     cellDetails[i][j].h = 0;
-    cellDetails[i][j].parent_y = i;
-    cellDetails[i][j].parent_y = j;
+    cellDetails[i][j].parent_i = i;
+    cellDetails[i][j].parent_j = j;
 
     let openList = new Map();
 
@@ -144,90 +149,149 @@ function astar(grid, startNode, dest) {
         j = p[1][1];
         closedList[i][j] = true;
 
-        let gNew, hNew, fNew;
-
-        // North successor
+       let gNew, hNew, fNew;
 
         if (isValid(i - 1, j) == true) {
             if (isDestination(i - 1, j, dest) == true) {
-                cellDetails[i - 1][j].parent_y = y;
-                cellDetails[i - 1][j].parent_x = x;
-                
+                cellDetails[i - 1][j].parent_i = i;
+                cellDetails[i - 1][j].parent_j = j;
+                console.log("The destination cell is found\n");
                 tracePath(cellDetails, dest);
                 foundDest = true;
                 return;
             }
-            else if (closedList[i-1][j] == false && isUnblocked(grid, i-1, j) == true) {
+
+            else if (closedList[i - 1][j] == false
+                     && isUnBlocked(grid, i - 1, j)
+                            == true) {
                 gNew = cellDetails[i][j].g + 1;
-                hNew = calculateH(i-1, j, dest);
+                hNew = calculateHValue(i - 1, j, dest);
                 fNew = gNew + hNew;
 
-                if (cellDetails[i-1][j].f == 2147483647 || cellDetails[i-1][j].f > fNew) {
-                    openList.set(fNew, [i-1, j]);
+                if (cellDetails[i - 1][j].f == 2147483647
+                    || cellDetails[i - 1][j].f > fNew) {
+                    openList.set(fNew, [i - 1, j]);
 
-                    cellDetails[i-1][j].f = fNew;
-                    cellDetails[i-1][j].g = gNew;
-                    cellDetails[i-1][j].h = hNew;
-                    cellDetails[i-1][j].parent_y = i;
-                    cellDetails[i-1][j].parent_x = j;
+                    cellDetails[i - 1][j].f = fNew;
+                    cellDetails[i - 1][j].g = gNew;
+                    cellDetails[i - 1][j].h = hNew;
+                    cellDetails[i - 1][j].parent_i = i;
+                    cellDetails[i - 1][j].parent_j = j;
                 }
             }
         }
+
         // South successor
 
         if (isValid(i + 1, j) == true) {
             if (isDestination(i + 1, j, dest) == true) {
-                cellDetails[i+1][j].parent_y = y;
-                cellDetails[i+1][j].parent_x = x;
-
+                cellDetails[i + 1][j].parent_i = i;
+                cellDetails[i + 1][j].parent_j = j;
+                console.log("The destination cell is found\n");
                 tracePath(cellDetails, dest);
                 foundDest = true;
                 return;
             }
-
-            else if (closedList[i+1][j] == false && isUnblocked(grid, i+1, j) == true) {
+    
+            else if (closedList[i + 1][j] == false
+                     && isUnBlocked(grid, i + 1, j)
+                            == true) {
                 gNew = cellDetails[i][j].g + 1;
-                hNew = calculateH(i+1, j, dest);
+                hNew = calculateHValue(i + 1, j, dest);
                 fNew = gNew + hNew;
-            
-                if (cellDetails[i+1][j].f == 2147483647 || cellDetails[i+1][j].f > fNew) {
-                    openList.set(fNew, [i+1, j]);
 
-                    cellDetails[i+1][j].f = fNew;
-                    cellDetails[i+1][j].g = gNew;
-                    cellDetails[i+1][j].h = hNew;
-                    cellDetails[i+1][j].parent_y = i;
-                    cellDetails[i+1][j].parent_x = j;
+                if (cellDetails[i + 1][j].f == 2147483647
+                    || cellDetails[i + 1][j].f > fNew) {
+                    openList.set(fNew, [i + 1, j]);
+                    cellDetails[i + 1][j].f = fNew;
+                    cellDetails[i + 1][j].g = gNew;
+                    cellDetails[i + 1][j].h = hNew;
+                    cellDetails[i + 1][j].parent_i = i;
+                    cellDetails[i + 1][j].parent_j = j;
                 }
             }
         }
-        
+
         // East successor
-        if (isValid(i, j+1) == true) {
+        if (isValid(i, j + 1) == true) {
             if (isDestination(i, j + 1, dest) == true) {
-                cellDetails[i][j+1].parent_y = y;
-                cellDetails[i][j+1].parent_x = x;
-                
+                cellDetails[i][j + 1].parent_i = i;
+                cellDetails[i][j + 1].parent_j = j;
+                console.log("The destination cell is found\n");
                 tracePath(cellDetails, dest);
                 foundDest = true;
                 return;
-            } else if (closedList[i][j+1] == false && isUnblocked(grid, i, j + 1) == true) {
+            }
+
+            else if (closedList[i][j + 1] == false
+                     && isUnBlocked(grid, i, j + 1)
+                            == true) {
                 gNew = cellDetails[i][j].g + 1;
-                hNew = calculateH(i, j+1, dest);
+                hNew = calculateHValue(i, j + 1, dest);
                 fNew = gNew + hNew;
 
-                if (cellDetails[i][j+1].f == 2147483647 || cellDetails[i][j+1].f > fNew) {
-                    openList.set(fNew, [i, j+1]);
+                if (cellDetails[i][j + 1].f == 2147483647
+                    || cellDetails[i][j + 1].f > fNew) {
+                    openList.set(fNew, [i, j + 1]);
 
-                    cellDetails[i][j+1].f = fNew;
-                    cellDetails[i][j+1].g = gNew;
-                    cellDetails[i][j+1].h = hNew;
-                    cellDetails[i][j+1].parent_y = i;
-                    cellDetails[i][j+1].parent_x = j;
+                    cellDetails[i][j + 1].f = fNew;
+                    cellDetails[i][j + 1].g = gNew;
+                    cellDetails[i][j + 1].h = hNew;
+                    cellDetails[i][j + 1].parent_i = i;
+                    cellDetails[i][j + 1].parent_j = j;
                 }
             }
         }
-        
+
+        // West successor
+        if (isValid(i, j - 1) == true) {
+            if (isDestination(i, j - 1, dest) == true) {
+                cellDetails[i][j - 1].parent_i = i;
+                cellDetails[i][j - 1].parent_j = j;
+                console.log("The destination cell is found\n");
+                tracePath(cellDetails, dest);
+                foundDest = true;
+                return;
+            }
+
+            else if (closedList[i][j - 1] == false
+                     && isUnBlocked(grid, i, j - 1)
+                            == true) {
+                gNew = cellDetails[i][j].g + 1;
+                hNew = calculateHValue(i, j - 1, dest);
+                fNew = gNew + hNew;
+
+                if (cellDetails[i][j - 1].f == 2147483647
+                    || cellDetails[i][j - 1].f > fNew) {
+                    openList.set(fNew, [i, j - 1]);
+
+                    cellDetails[i][j - 1].f = fNew;
+                    cellDetails[i][j - 1].g = gNew;
+                    cellDetails[i][j - 1].h = hNew;
+                    cellDetails[i][j - 1].parent_i = i;
+                    cellDetails[i][j - 1].parent_j = j;
+                }
+            }
+        }
     }
 
+    if (foundDest == false) {
+        return;
+    }
 }
+
+let grid = [[ 1, 0, 1, 1, 1, 1, 0, 1, 1, 1 ],
+[ 1, 1, 1, 0, 1, 1, 1, 0, 1, 1 ],
+[ 1, 1, 1, 0, 1, 1, 0, 1, 0, 1 ],
+[ 0, 0, 1, 0, 1, 0, 0, 0, 0, 1 ],
+[ 1, 1, 1, 0, 1, 1, 1, 0, 1, 0 ],
+[ 1, 0, 1, 1, 1, 1, 0, 1, 0, 0 ],
+[ 1, 0, 0, 0, 0, 1, 0, 0, 0, 1 ],
+[ 1, 0, 1, 1, 1, 1, 0, 1, 1, 1 ],
+[ 1, 1, 1, 0, 0, 0, 1, 0, 0, 1 ] ];
+
+let source = [8, 0];
+
+let dest = [0, 0];
+
+console.log(aStarSearch(grid, source, dest));
