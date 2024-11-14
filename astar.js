@@ -295,3 +295,7 @@ let source = [8, 0];
 let dest = [0, 0];
 
 console.log(aStarSearch(grid, source, dest));
+
+module.exports = {
+    closedList
+};
