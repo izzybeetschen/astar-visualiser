@@ -280,7 +280,7 @@ function aStarSearch(grid, src, dest)
     }
 }
 
-const grid = [[ 1, 0, 1, 1, 1, 1, 0, 1, 1, 1 ],
+export const grid = [[ 1, 0, 1, 1, 1, 1, 0, 1, 1, 1 ],
 [ 1, 1, 1, 0, 1, 1, 1, 0, 1, 1 ],
 [ 1, 1, 1, 0, 1, 1, 0, 1, 0, 1 ],
 [ 0, 0, 1, 0, 1, 0, 0, 0, 0, 1 ],
@@ -295,7 +295,3 @@ let source = [8, 0];
 let dest = [0, 0];
 
 console.log(aStarSearch(grid, source, dest));
-
-module.exports = {
-    grid
-};
