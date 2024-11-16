@@ -280,7 +280,7 @@ function aStarSearch(grid, src, dest)
     }
 }
 
-let grid = [[ 1, 0, 1, 1, 1, 1, 0, 1, 1, 1 ],
+const grid = [[ 1, 0, 1, 1, 1, 1, 0, 1, 1, 1 ],
 [ 1, 1, 1, 0, 1, 1, 1, 0, 1, 1 ],
 [ 1, 1, 1, 0, 1, 1, 0, 1, 0, 1 ],
 [ 0, 0, 1, 0, 1, 0, 0, 0, 0, 1 ],
@@ -297,5 +297,5 @@ let dest = [0, 0];
 console.log(aStarSearch(grid, source, dest));
 
 module.exports = {
-    closedList
+    grid
 };
